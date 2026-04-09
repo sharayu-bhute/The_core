@@ -1,33 +1,150 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Samadhan - Report Issue</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Issue — Samadhan</title>
+  <link rel="stylesheet" href="static\css\style.css">
 </head>
 <body>
 
-<div class="container">
-  <h1>Report Civic Issue</h1>
+  <header class="site-header">
+    <a href="/" class="logo">Samadhan <span></span></a>
+    <nav>
+      <a href="/dashboard">← Dashboard</a>
+    </nav>
+  </header>
 
-  <input type="file" id="imageInput" accept="image/*">
+  <div class="page-wrapper">
+    <div class="container fade-up" style="max-width:560px;">
 
-  <div class="toggle">
-    <label>
-      <input type="checkbox" id="locationToggle" checked>
-      Use Current Location
-    </label>
+      <p class="hero-eyebrow" style="justify-content:flex-start;margin-bottom:0.75rem;">
+        Civic Report
+      </p>
+      <h1 class="page-title">Report an Issue</h1>
+      <p class="page-subtitle">Upload a photo and we'll classify the issue and route it automatically.</p>
+
+      <!-- Drag & Drop upload zone -->
+      <div class="form-group">
+        <label>Photo Evidence</label>
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('imageInput').click()">
+          <div class="dropzone-icon">📷</div>
+          <p><strong>Click to upload</strong> or drag & drop</p>
+          <p style="font-size:0.8rem;margin-top:0.3rem;">PNG, JPG up to 10MB</p>
+          <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)">
+        </div>
+        <img id="imagePreview" class="image-preview" alt="Preview">
+      </div>
+
+      <hr class="section-sep">
+
+      <!-- Location -->
+      <div class="form-group">
+        <label>Location</label>
+        <div class="toggle-group">
+          <input type="checkbox" id="locationToggle" checked onchange="toggleLocation(this)">
+          <label for="locationToggle">Use my current GPS location</label>
+        </div>
+      </div>
+
+      <div class="form-group" id="manualLocationGroup" style="display:none;">
+        <label for="manualLocation">Manual Address</label>
+        <input type="text" id="manualLocation" placeholder="e.g. MG Road, Pune 411001">
+      </div>
+
+      <div id="locationStatus" style="font-size:0.8rem;color:var(--text-muted);font-family:'DM Mono',monospace;margin-bottom:1rem;"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="getLocation()" id="locBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4"/></svg>
+          Fetch Location
+        </button>
+        <button onclick="submitIssue()" id="submitBtn">
+          Submit Issue
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+        </button>
+      </div>
+
+      <div id="loading" style="display:none;" class="loading-text mt-md">
+        <span class="loading-dot"></span>
+        <span class="loading-dot"></span>
+        <span class="loading-dot"></span>
+        Analysing image...
+      </div>
+
+      <div id="result"></div>
+
+    </div>
   </div>
 
-  <input type="text" id="manualLocation" placeholder="Enter location manually">
+  <script src="/static/js/app.js"></script>
+  <script>
+    // Drag and drop
+    const dropzone = document.getElementById('dropzone');
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        document.getElementById('imageInput').files = dt.files;
+        previewImage({ target: { files: [file] } });
+      }
+    });
 
-  <button onclick="getLocation()">Fetch Location</button>
-  <button onclick="submitIssue()">Submit Issue</button>
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const preview = document.getElementById('imagePreview');
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+      dropzone.querySelector('.dropzone-icon').textContent = '✅';
+    }
 
-  <div id="loading"></div>
-  <div id="result"></div>
-</div>
+    function toggleLocation(cb) {
+      document.getElementById('manualLocationGroup').style.display = cb.checked ? 'none' : 'block';
+    }
 
-<script src="/static/js/app.js"></script>
+    // Override loading display to use new style
+    const _submitIssue = window.submitIssue;
+    window.submitIssue = async function() {
+      const loading = document.getElementById('loading');
+      const result  = document.getElementById('result');
+      const btn     = document.getElementById('submitBtn');
+
+      loading.style.display = 'flex';
+      loading.querySelector('.loading-dot') && (loading.innerHTML = '<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span> Analysing image...');
+      result.innerHTML = '';
+      btn.disabled = true;
+
+      if (typeof _submitIssue === 'function') {
+        await _submitIssue();
+      }
+
+      btn.disabled = false;
+      loading.style.display = 'none';
+    };
+
+    // Location status
+    const locStatus = document.getElementById('locationStatus');
+    const _getLocation = window.getLocation;
+    window.getLocation = function() {
+      locStatus.textContent = '⟳ Fetching GPS coordinates...';
+      navigator.geolocation.getCurrentPosition(pos => {
+        window.locationData = `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+        locStatus.textContent = `✓ Location: ${window.locationData}`;
+        locStatus.style.color = 'var(--success)';
+      }, () => {
+        locStatus.textContent = '✗ Location access denied — enter manually.';
+        locStatus.style.color = 'var(--danger)';
+        document.getElementById('locationToggle').checked = false;
+        toggleLocation({ checked: false });
+      });
+    };
+  </script>
 
 </body>
 </html>

@@ -1,29 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Signup - Samadhan</title>
-  <link rel="stylesheet" href="/static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — Samadhan</title>
+  <link rel="stylesheet" href="static\css\style.css">
 </head>
 <body>
 
-<div class="container">
-  <h1>Signup</h1>
+  <header class="site-header">
+    <a href="/" class="logo">Samadhan <span></span></a>
+    <nav>
+      <a href="/login">Already have an account?</a>
+    </nav>
+  </header>
 
-  <label for="name">username</label>
-  <input type="text" name="username" id="name" placeholder="Name">
+  <div class="page-wrapper">
+    <div class="container fade-up">
 
-  <label for="email">email</label>
-  <input type="email" name="email" id="email" placeholder="Email">
+      <p class="hero-eyebrow" style="justify-content:flex-start;margin-bottom:0.75rem;">
+        Join Samadhan
+      </p>
+      <h1 class="page-title">Create account</h1>
+      <p class="page-subtitle">Start reporting civic issues in your area.</p>
 
-  <label for="password">password</label>
-  <input type="password" name="password" id="password" placeholder="Password">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Your full name"
+          required
+          autocomplete="name"
+        >
+      </div>
 
-  <button onclick="signup()">Signup</button>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        >
+      </div>
 
-  <div id="message"></div>
-</div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Min. 6 characters"
+          required
+          minlength="6"
+          autocomplete="new-password"
+        >
+      </div>
 
-<script src="/static/js/auth.js"></script>
+      <button onclick="signup()" id="signupBtn">
+        <span id="signupText">Create Account</span>
+        <span id="signupSpinner" style="display:none">
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+        </span>
+      </button>
+
+      <div id="message"></div>
+
+      <div class="link-row">
+        Already have an account? <a href="/login">Sign in</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/static/js/auth.js"></script>
+  <script>
+    const _signup = window.signup;
+    window.signup = function() {
+      const btn = document.getElementById('signupBtn');
+      document.getElementById('signupText').style.display = 'none';
+      document.getElementById('signupSpinner').style.display = 'flex';
+      btn.disabled = true;
+      if (typeof _signup === 'function') _signup();
+      setTimeout(() => {
+        btn.disabled = false;
+        document.getElementById('signupText').style.display = 'inline';
+        document.getElementById('signupSpinner').style.display = 'none';
+      }, 4000);
+    };
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') window.signup();
+    });
+  </script>
 
 </body>
 </html>

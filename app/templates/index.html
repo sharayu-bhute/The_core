@@ -1,40 +1,69 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Samadhan Dashboard</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Samadhan — Civic Issue Reporting</title>
+  <link rel="stylesheet" href="static\css\style.css">
 </head>
-
 <body>
 
-<div class="container">
-    <h1>Dashboard</h1>
+  <header class="site-header">
+    <a href="/" class="logo">Samadhan <span></span></a>
+    <nav>
+      <a href="/login">Login</a>
+      <a href="/signup" class="btn btn-secondary" style="width:auto;padding:0.45rem 1rem;font-size:0.85rem;">Get Started</a>
+    </nav>
+  </header>
 
-    <!-- Navigation Section -->
-    <div class="form-group">
-        <label>Actions</label>
+  <div style="position:relative;z-index:1;">
 
-        <a href="/upload-page">
-            <button type="button">Report New Issue</button>
+    <!-- Hero -->
+    <section class="hero fade-up">
+      <p class="hero-eyebrow">Civic Empowerment Platform</p>
+      <h1>Your city. Your <em>voice.</em></h1>
+      <p>
+        Samadhan connects citizens with local government — report potholes,
+        broken streetlights, garbage dumps and more. We route it. They fix it.
+      </p>
+      <div class="hero-cta">
+        <a href="/signup" class="btn-cta-primary">
+          Report an Issue
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
+        <a href="/login" class="btn-cta-secondary">Sign In</a>
+      </div>
+    </section>
 
-        <button type="button" onclick="logout()">Logout</button>
+    <!-- Feature cards -->
+    <div class="features">
+      <div class="feature-card fade-up fade-up-delay-1 reveal">
+        <div class="feature-icon">📷</div>
+        <h3>Photo Evidence</h3>
+        <p>Snap a photo of the issue. Our AI instantly classifies it and routes to the right department.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-2 reveal">
+        <div class="feature-icon">📍</div>
+        <h3>Precise Location</h3>
+        <p>GPS auto-detection or manual entry ensures your complaint lands with the right local body.</p>
+      </div>
+      <div class="feature-card fade-up fade-up-delay-3 reveal">
+        <div class="feature-icon">🔔</div>
+        <h3>Live Tracking</h3>
+        <p>Watch your complaint move from submitted → assigned → resolved in real time from your dashboard.</p>
+      </div>
     </div>
 
-    <!-- Issues Section -->
-    <div class="form-group">
-        <label>Your Reported Issues</label>
-        <div id="issues"></div>
-    </div>
+  </div>
 
-</div>
-
-<script src="/static/js/app.js"></script>
-<script>
-    loadIssues();
-</script>
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => io.observe(el));
+  </script>
 
 </body>
-
 </html>

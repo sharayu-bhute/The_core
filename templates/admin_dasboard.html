@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Samadhan</title>
+  <link rel="stylesheet" href="static\css\style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="logo">Samadhan <span></span></a>
+    <nav>
+      <span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--text-muted);letter-spacing:0.08em;text-transform:uppercase;">Admin</span>
+      <button class="btn-ghost" onclick="logout()" style="padding:0.4rem 1rem;font-size:0.85rem;">Sign Out</button>
+    </nav>
+  </header>
+
+  <div class="page-wrapper dashboard-layout">
+    <div class="dashboard-grid" style="padding-bottom:3rem;">
+
+      <!-- Sidebar -->
+      <aside class="sidebar fade-up">
+        <div class="brand">Admin Panel</div>
+        <nav>
+          <a href="/admin" class="active">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            All Complaints
+          </a>
+        </nav>
+        <hr class="section-sep">
+
+        <!-- Legend -->
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;">Status Key</div>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;">
+          <span class="badge badge-pending">Pending</span>
+          <span class="badge badge-assigned">Assigned</span>
+          <span class="badge badge-resolved">Resolved</span>
+          <span class="badge badge-rejected">Rejected</span>
+        </div>
+
+        <hr class="section-sep">
+        <button class="btn-ghost w-full" onclick="logout()" style="margin-top:0.5rem;font-size:0.85rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Sign Out
+        </button>
+      </aside>
+
+      <!-- Main -->
+      <main class="main-content fade-up fade-up-delay-1">
+
+        <div class="dash-header">
+          <h1 class="dash-title">All Complaints</h1>
+          <span id="totalCount" style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--text-muted);">Loading…</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" style="margin-bottom:1.5rem;">
+          <div class="stat-card">
+            <div class="stat-number" id="statTotal">—</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statPending" style="color:var(--warning)">—</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statAssigned" style="color:var(--accent-2)">—</div>
+            <div class="stat-label">Assigned</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statResolved" style="color:var(--success)">—</div>
+            <div class="stat-label">Resolved</div>
+          </div>
+        </div>
+
+        <!-- Complaints table -->
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);">
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Image</th>
+                  <th>Issue Type</th>
+                  <th>Location</th>
+                  <th>Reported By</th>
+                  <th>Status</th>
+                  <th>Department</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="complaintsBody">
+                <tr>
+                  <td colspan="7" style="text-align:center;padding:3rem;color:var(--text-muted);">
+                    <div class="loading-text" style="justify-content:center;">
+                      <span class="loading-dot"></span>
+                      <span class="loading-dot"></span>
+                      <span class="loading-dot"></span>
+                      Loading complaints…
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+  <script>
+    function statusBadge(status) {
+      const map = {
+        pending:  'badge-pending',
+        assigned: 'badge-assigned',
+        resolved: 'badge-resolved',
+        rejected: 'badge-rejected'
+      };
+      const cls = map[(status||'').toLowerCase()] || 'badge-pending';
+      return `<span class="badge ${cls}">${status || 'Pending'}</span>`;
+    }
+
+    async function loadAdminComplaints() {
+      try {
+        const res  = await fetch('/admin/complaints');
+        const data = await res.json();
+        const tbody = document.getElementById('complaintsBody');
+
+        // Stats
+        document.getElementById('statTotal').textContent    = data.length;
+        document.getElementById('statPending').textContent  = data.filter(i => (i.status||'').toLowerCase() === 'pending').length;
+        document.getElementById('statAssigned').textContent = data.filter(i => (i.status||'').toLowerCase() === 'assigned').length;
+        document.getElementById('statResolved').textContent = data.filter(i => (i.status||'').toLowerCase() === 'resolved').length;
+        document.getElementById('totalCount').textContent   = `${data.length} records`;
+
+        if (!data.length) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--text-muted);">No complaints yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(issue => `
+          <tr>
+            <td>
+              ${issue.image_path
+                ? `<img src="${issue.image_path}" style="width:56px;height:40px;object-fit:cover;border-radius:4px;border:1px solid var(--border);" alt="">`
+                : `<div style="width:56px;height:40px;background:var(--surface-2);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">📷</div>`
+              }
+            </td>
+            <td><strong>${issue.issue_type || '—'}</strong></td>
+            <td style="color:var(--text-muted);font-size:0.83rem;">${issue.location || '—'}</td>
+            <td style="font-size:0.83rem;">${issue.user_email || issue.user_id || '—'}</td>
+            <td>${statusBadge(issue.status)}</td>
+            <td style="font-size:0.83rem;color:var(--text-muted);">${issue.department || '—'}</td>
+            <td>
+              <select
+                onchange="updateStatus(${issue.id}, this.value)"
+                style="font-size:0.78rem;padding:0.35rem 0.5rem;width:auto;"
+              >
+                <option value="">— Change —</option>
+                <option value="pending"  ${issue.status==='pending'  ? 'selected' : ''}>Pending</option>
+                <option value="assigned" ${issue.status==='assigned' ? 'selected' : ''}>Assigned</option>
+                <option value="resolved" ${issue.status==='resolved' ? 'selected' : ''}>Resolved</option>
+                <option value="rejected" ${issue.status==='rejected' ? 'selected' : ''}>Rejected</option>
+              </select>
+            </td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        document.getElementById('complaintsBody').innerHTML =
+          `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--danger);">Failed to load complaints.</td></tr>`;
+        console.error(err);
+      }
+    }
+
+    async function updateStatus(id, status) {
+      if (!status) return;
+      try {
+        await fetch(`/admin/complaints/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        loadAdminComplaints();
+      } catch (err) {
+        alert('Failed to update status.');
+      }
+    }
+
+    loadAdminComplaints();
+  </script>
+
+</body>
+</html>

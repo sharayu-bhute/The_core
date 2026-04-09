@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Samadhan Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Dashboard</h1>
+
+    <!-- Navigation Section -->
+    <div class="form-group">
+        <label>Actions</label>
+
+        <a href="/upload-page">
+            <button type="button">Report New Issue</button>
+        </a>
+
+        <button type="button" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- Issues Section -->
+    <div class="form-group">
+        <label>Your Reported Issues</label>
+        <div id="issues"></div>
+    </div>
+
+</div>
+
+<script src="/static/js/app.js"></script>
+<script>
+    loadIssues();
+</script>
+
+</body>
+
+</html>

@@ -1,7 +1,8 @@
 from flask import Blueprint,request,redirect,url_for,render_template,flash,session
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email
-from app.form import RegistrationForm
+from app.form import RegistrationFormfrom 
+
 auth_bp=Blueprint('auth',__name__)
 USER_CREDENTIALS={'username':'admin','password':'1234'}
 
@@ -24,7 +25,7 @@ def login():
             flash('Login successful', 'success')
             return redirect(url_for('auth.login'))
 
-    return render_template('login.html', form=form)
+    return render_template('login.html')
 
 
 @auth_bp.route('/logout')

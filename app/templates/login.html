@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login — Samadhan</title>
 
-  <!-- FIXED -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -13,9 +12,12 @@
   <header class="site-header">
     <a href="/" class="logo">Samadhan</a>
     <nav>
-      <a href="/signup">Create account</a>
+      <a href="{{ url_for('auth.signup') }}">Create account</a>
     </nav>
   </header>
+
+  <!-- ✅ FORM START -->
+  <form method="POST" action="{{ url_for('auth.login') }}">
 
   <div class="page-wrapper">
     <div class="container fade-up">
@@ -26,62 +28,43 @@
 
       <div class="form-group">
         <label for="email">Email address</label>
-        <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          placeholder="you@example.com" 
+          required
+        >
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          placeholder="Enter your password" 
+          required
+        >
       </div>
 
-      <button onclick="login()" id="loginBtn">
-        <span id="loginText">Sign In</span>
-        <span id="loginSpinner" style="display:none">
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-        </span>
+      <!-- ✅ SUBMIT BUTTON -->
+      <button type="submit" id="loginBtn">
+        Sign In
       </button>
 
       <div id="message"></div>
 
       <div class="link-row">
-        Don't have an account? <a href="/signup">Create one</a>
+        Don't have an account? 
+        <a href="{{ url_for('auth.signup') }}">Create one</a>
       </div>
 
     </div>
   </div>
 
-  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-
-  <script>
-    const _login = window.login;
-
-    window.login = function() {
-      const btn = document.getElementById('loginBtn');
-      document.getElementById('loginText').style.display = 'none';
-      document.getElementById('loginSpinner').style.display = 'flex';
-      btn.disabled = true;
-
-      if (typeof _login === 'function') _login();
-
-      setTimeout(() => {
-        btn.disabled = false;
-        document.getElementById('loginText').style.display = 'inline';
-        document.getElementById('loginSpinner').style.display = 'none';
-      }, 4000);
-    };
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') window.login();
-    });
-
-    function showMsg(text, type='error') {
-      const m = document.getElementById('message');
-      m.textContent = text;
-      m.className = `message show ${type}`;
-    }
-  </script>
+  </form>
+  <!-- ✅ FORM END -->
 
 </body>
 </html>

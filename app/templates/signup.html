@@ -1,61 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-  <title>Signup - Samadhan</title>
-  <link rel="stylesheet" href="static\css\style.css">
-</head>
-<body>
-
-<div class="container">
-  <h1>Signup</h1>
-
-  <div class="form-group">
-    <label for="name">Full Name</label>
-    <input 
-      type="text" 
-      id="name" 
-      name="name"
-      placeholder="Enter your name"
-      required
-    >
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input 
-      type="email" 
-      id="email" 
-      name="email"
-      placeholder="Enter your email"
-      required
-    >
-  </div>
-
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input 
-      type="password" 
-      id="password" 
-      name="password"
-      placeholder="Create password"
-      required
-      minlength="6"
-    >
-  </div>
-
-  <button onclick="signup()">Signup</button>
-
-  <div id="message"></div>
-</div>
-
-<script src="/static/js/auth.js"></script>
-
-</body>
-</html> -->
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,12 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up — Samadhan</title>
 
-  <!-- FIX: Flask-compatible path -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css\style.css') }}">
+  <!-- ✅ FIXED PATH -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-  <!-- Header from 1st UI -->
   <header class="site-header">
     <a href="/" class="logo">Samadhan</a>
     <nav>
@@ -76,7 +17,6 @@
     </nav>
   </header>
 
-  <!-- Wrapper from 1st UI -->
   <div class="page-wrapper">
     <div class="container fade-up">
 
@@ -84,53 +24,52 @@
       <h1 class="page-title">Create account</h1>
       <p class="page-subtitle">Start reporting civic issues in your area.</p>
 
-      <!-- FORM (logic same as 2nd file) -->
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name"
-          placeholder="Enter your name"
-          required
-          autocomplete="name"
-        >
-      </div>
+      <!-- ✅ FORM ADDED -->
+      <form method="POST" action="{{ url_for('auth.signup') }}" >
 
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email"
-          placeholder="Enter your email"
-          required
-          autocomplete="email"
-        >
-      </div>
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name"
+            placeholder="Enter your name"
+            required
+            autocomplete="name"
+          >
+        </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password"
-          placeholder="Create password"
-          required
-          minlength="6"
-          autocomplete="new-password"
-        >
-      </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            placeholder="Enter your email"
+            required
+            autocomplete="email"
+          >
+        </div>
 
-      <!-- Button (enhanced UI but same signup() call) -->
-      <button onclick="signup()" id="signupBtn">
-        <span id="signupText">Signup</span>
-        <span id="signupSpinner" style="display:none">
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-        </span>
-      </button>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password"
+            placeholder="Create password"
+            required
+            minlength="6"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <!-- ✅ Button now submits form -->
+        <button type="submit" id="signupBtn">
+          <span id="signupText">Signup</span>
+        </button>
+
+      </form>
 
       <div id="message"></div>
 
@@ -140,34 +79,6 @@
 
     </div>
   </div>
-
-  <!-- JS (same logic preserved) -->
-  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
-
-  <script>
-    const _signup = window.signup;
-
-    window.signup = function() {
-      const btn = document.getElementById('signupBtn');
-
-      // UI enhancement (does not change logic)
-      document.getElementById('signupText').style.display = 'none';
-      document.getElementById('signupSpinner').style.display = 'flex';
-      btn.disabled = true;
-
-      if (typeof _signup === 'function') _signup();
-
-      setTimeout(() => {
-        btn.disabled = false;
-        document.getElementById('signupText').style.display = 'inline';
-        document.getElementById('signupSpinner').style.display = 'none';
-      }, 4000);
-    };
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Enter') window.signup();
-    });
-  </script>
 
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask 
+from flask import Flask, app 
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -14,7 +14,8 @@ def create_app():
     db.init_app(app)
 
     from app.routes.auth import auth_bp, admin_bp
-
+    from app.routes.complaint import complaint_bp
+    app.register_blueprint(complaint_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
 

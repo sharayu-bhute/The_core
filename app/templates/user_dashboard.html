@@ -26,7 +26,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             My Issues
           </a>
-          <a href="/upload-page">
+          <a href="/upload">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Report New Issue
           </a>
@@ -43,7 +43,7 @@
 
         <div class="dash-header">
           <h1 class="dash-title">My Reports</h1>
-          <a href="/upload-page" class="btn btn-secondary">
+          <a href="/upload" class="btn btn-secondary">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             New Report
           </a>
@@ -72,7 +72,7 @@
             <div style="font-size:2.5rem;margin-bottom:0.75rem;">📭</div>
             <p style="font-weight:600;">No issues reported yet</p>
             <p style="font-size:0.875rem;margin-top:0.3rem;">When you report a civic issue, it will appear here.</p>
-            <a href="/upload-page" class="btn" style="width:auto;margin-top:1.25rem;display:inline-flex;">
+            <a href="/upload" class="btn" style="width:auto;margin-top:1.25rem;display:inline-flex;">
               Report your first issue →
             </a>
           </div>
@@ -99,7 +99,7 @@
     // Override loadIssues to render beautifully
     async function loadIssues() {
       try {
-        const res  = await fetch('/complaints');
+        const res  = await fetch('/my-complaints');
         const data = await res.json();
         const container = document.getElementById('issues');
         const empty     = document.getElementById('emptyState');

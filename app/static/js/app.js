@@ -92,7 +92,7 @@ async function loadIssues() {
 
     container.innerHTML = data.map(issue => `
       <div style="border:1px solid #ccc; padding:10px; margin:10px;">
-        <img src="/${issue.image_path}" width="200"><br>
+        <img src="{{ url_for('static', filename=issue.image_path) }}" width="200"><br>
         <h3>${issue.issue_type}</h3>
         <p>Status: ${issue.status}</p>
         <p>Assigned: ${issue.assigned_to || "Not Assigned"}</p>

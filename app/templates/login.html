@@ -10,18 +10,12 @@
 <body>
 
   <header class="site-header">
-   <div class="nav_logo">
-     <a href="/" class="logo">Samadhan</a>
-     <a href="/">Home</a>
-   </div>
-
+    <a href="/" class="logo">Samadhan</a>
+    
     <nav>
       <a href="{{ url_for('auth.signup') }}">Create account</a>
     </nav>
   </header>
-
-  <!-- ✅ FORM START -->
-  <form method="POST" action="{{ url_for('auth.login') }}">
 
   <div class="page-wrapper">
     <div class="container fade-up">
@@ -30,32 +24,46 @@
       <h1 class="page-title">Sign in</h1>
       <p class="page-subtitle">Continue to your Samadhan dashboard.</p>
 
-      <div class="form-group">
-        <label for="email">Email address</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email"
-          placeholder="you@example.com" 
-          required
-        >
-      </div>
+      <!-- ✅ FORM START (MOVED HERE) -->
+      <form method="POST" action="{{ url_for('auth.login') }}">
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password"
-          placeholder="Enter your password" 
-          required
-        >
-      </div>
+        <div class="form-group">
+          <label for="role">Login as</label>
+          <select id="role" name="role" required>
+            <option value="">Select Role</option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
 
-      <!-- ✅ SUBMIT BUTTON -->
-      <button type="submit" id="loginBtn">
-        Sign In
-      </button>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            placeholder="you@example.com" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password"
+            placeholder="Enter your password" 
+            required
+          >
+        </div>
+
+        <button type="submit" id="loginBtn">
+          Sign In
+        </button>
+
+      </form>
+      <!-- ✅ FORM END -->
 
       <div id="message"></div>
 
@@ -66,9 +74,6 @@
 
     </div>
   </div>
-
-  </form>
-  <!-- ✅ FORM END -->
 
 </body>
 </html>

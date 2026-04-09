@@ -164,6 +164,13 @@ body::before {
   margin-bottom: 1.25rem;
 }
 
+button {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
 label {
   font-size: 0.8rem;
   font-weight: 600;

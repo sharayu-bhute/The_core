@@ -107,26 +107,52 @@
     function toggleLocation(cb) {
       document.getElementById('manualLocationGroup').style.display = cb.checked ? 'none' : 'block';
     }
+async function submitIssue() {
+    const imageInput = document.getElementById("imageInput");
+    const file = imageInput.files[0];
 
-    // Override loading display to use new style
-    const _submitIssue = window.submitIssue;
-    window.submitIssue = async function() {
-      const loading = document.getElementById('loading');
-      const result  = document.getElementById('result');
-      const btn     = document.getElementById('submitBtn');
+    if (!file) {
+        alert("Please select an image");
+        return;
+    }
 
-      loading.style.display = 'flex';
-      loading.querySelector('.loading-dot') && (loading.innerHTML = '<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span> Analysing image...');
-      result.innerHTML = '';
-      btn.disabled = true;
+    const formData = new FormData();
+    formData.append("image", file);
 
-      if (typeof _submitIssue === 'function') {
-        await _submitIssue();
-      }
+    // location
+    if (window.locationData) {
+        const [lat, lon] = window.locationData.split(",");
+        formData.append("latitude", lat.trim());
+        formData.append("longitude", lon.trim());
+    }
 
-      btn.disabled = false;
-      loading.style.display = 'none';
-    };
+    const manualAddress = document.getElementById("manualLocation").value;
+    formData.append("address", manualAddress);
+
+    try {
+        const res = await fetch("/submit-issue", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+            alert(data.error);
+            return;
+        }
+
+        alert("✅ Complaint submitted!");
+
+        // 🔥 REDIRECT WORKING
+        window.location.href = data.redirect;
+
+    } catch (err) {
+        console.error(err);
+        alert("❌ Error submitting issue");
+    }
+}
+</script>
 
     // Location status
     const locStatus = document.getElementById('locationStatus');

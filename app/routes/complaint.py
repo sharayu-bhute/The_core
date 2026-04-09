@@ -1,18 +1,18 @@
-from flask import Blueprint, request, jsonify, session, render_template
+from flask import Blueprint, request, jsonify, session, render_template, url_for,redirect
 from app.models import Complaint
 from app import db
 import os
+import time
+from werkzeug.utils import secure_filename
 
 complaint_bp = Blueprint('complaint', __name__)
 
-
-# ✅ Upload page (UI open karne ke liye)
+# ✅ Upload page
 @complaint_bp.route('/upload')
 def upload_page():
     return render_template('upload.html')
 
 
-# ✅ Submit issue (JS se call hoga)
 @complaint_bp.route('/submit-issue', methods=['POST'])
 def submit_issue():
     if 'user' not in session:
@@ -24,17 +24,23 @@ def submit_issue():
     longitude = request.form.get('longitude')
     address = request.form.get('address')
 
+    print("FILES:", request.files)
+    print("FORM:", request.form)
+
     if not image:
         return jsonify({"error": "No image uploaded"}), 400
 
-    # ✅ Ensure folder exists
     upload_folder = "static/uploads"
     os.makedirs(upload_folder, exist_ok=True)
 
-    image_path = os.path.join(upload_folder, image.filename)
-    image.save(image_path)
+    filename = secure_filename(image.filename)
+    filename = str(int(time.time())) + "_" + filename
 
-    # ✅ Save to DB
+    file_path = os.path.join(upload_folder, filename)
+    image.save(file_path)
+
+    image_path = f"uploads/{filename}"
+
     new_complaint = Complaint(
         user_id=session['user'],
         image_path=image_path,
@@ -48,7 +54,12 @@ def submit_issue():
     db.session.add(new_complaint)
     db.session.commit()
 
-    return jsonify({"message": "Complaint submitted successfully"})
+    return jsonify({
+        "message": "Complaint submitted successfully",
+        "redirect": url_for('auth.user_dashboard')
+    })
+
+
 # ✅ Get user's complaints
 @complaint_bp.route('/my-complaints')
 def my_complaints():

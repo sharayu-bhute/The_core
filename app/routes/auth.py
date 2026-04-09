@@ -13,12 +13,16 @@ def login():
         username = form.name.data
         email = form.email.data
         password = form.password.data
-        if username == USER_CREDENTIALS['username'] and password == USER_CREDENTIALS['password']:
-            session['user'] = username
+        if form.email.data != USER_CREDENTIALS['email']:
+            form.email.errors.append("Email not registered")
+
+        elif form.password.data != USER_CREDENTIALS['password']:
+            form.password.errors.append("Incorrect password")
+
+        else:
+            session['user'] = form.name.data
             flash('Login successful', 'success')
             return redirect(url_for('auth.login'))
-        else:
-            flash('Invalid credentials', 'danger')
 
     return render_template('login.html', form=form)
 
